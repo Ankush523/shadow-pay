@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lighthouse-web3/sdk": "^0.3.2",
+    "axios": "^1.6.8",
     "bs58": "^5.0.0",
     "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",

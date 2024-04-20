@@ -1,59 +1,253 @@
-import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+// import React, { useEffect, useState } from 'react';
+// import { ethers } from 'ethers';
 
-// Props to specify the contract address and Ethereum network provider URL
-interface TokenEventProps {
-    contractAddress: string;
-    providerUrl: string;
+// // Props to specify the contract address and Ethereum network provider URL
+// interface TokenEventProps {
+//   contractAddress: string;
+//   providerUrl: string;
+// }
+
+// // Type for storing transfer event data
+// type TransferEvent = {
+//   from: string;
+//   to: string;
+//   amount: string;
+// };
+
+// const Receive: React.FC<TokenEventProps> = () => {
+//     const [transfers, setTransfers] = useState<TransferEvent[]>([]);
+//     const contractAddress = '0x49D9494f1CEaa172D32dB6485ebAE24038840b4D';
+//     const providerUrl = 'https://sepolia.infura.io/v3/358f5ae5bc804b81ad74ce87a3682743';
+//     useEffect(() => {
+//         const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+//         const contract = new ethers.Contract(contractAddress, [
+//             // ABI for the Transfer event
+//             "event Transfer(address indexed from, address indexed to, uint256 value)"
+//         ], provider);
+
+//         // Listening to the Transfer events emitted by the contract
+//         const onTransfer = (from: string, to: string, amount: ethers.BigNumber) => {
+//             console.log(`Transfer from ${from} to ${to} amount ${amount.toString()}`);
+//             setTransfers(prevTransfers => [
+//                 ...prevTransfers,
+//                 { from, to, amount: ethers.utils.formatEther(amount) }
+//             ]);
+//         };
+
+//         contract.on('Transfer', onTransfer);
+
+//         return () => {
+//             // Clean up the event listener when the component unmounts
+//             contract.off('Transfer', onTransfer);
+//         };
+//     }, [contractAddress, providerUrl]);
+
+//     return (
+//         <div>
+//             <h1>Token Transfers</h1>
+//             <ul>
+//                 {transfers.map((transfer, index) => (
+//                     <li key={index}>
+//                         {`${transfer.from} transferred ${transfer.amount} tokens to ${transfer.to}`}
+//                     </li>
+//                 ))}
+//             </ul>
+//         </div>
+//     );
+// };
+
+// export default Receive;
+
+// //4285c19e.16a1a7c19c2c42ed84424c46e8ef583e
+
+// import React, { useEffect, useState } from 'react';
+// import { ethers } from 'ethers';
+// import lighthouse from '@lighthouse-web3/sdk';
+// import axios from 'axios';
+
+// // Props to specify the contract address and Ethereum network provider URL
+// interface TokenEventProps {
+//   contractAddress: string;
+//   providerUrl: string;
+// }
+
+// // Type for storing transfer event data
+// type TransferEvent = {
+//   from: string;
+//   amount: string;
+//   to: string;
+// };
+
+// const Receive: React.FC<TokenEventProps> = () => {
+//   const [transfers, setTransfers] = useState<TransferEvent[]>([]);
+//   const [transfersFromLighthouse, setTransfersFromLighthouse] = useState<any>();
+//   const [transfersToLighthouse, setTransfersToLighthouse] = useState<any>();
+//   const [transfersValueLighthouse, setTransfersValueLighthouse] = useState<any>();
+//   const contractAddress = '0x49D9494f1CEaa172D32dB6485ebAE24038840b4D';
+//   const providerUrl = 'https://sepolia.infura.io/v3/358f5ae5bc804b81ad74ce87a3682743';
+//   const apiKey = '4285c19e.16a1a7c19c2c42ed84424c46e8ef583e';
+//   const name = 'shikamaru';
+
+//   const getUploads = async() =>{
+//     const response = await lighthouse.getUploads(apiKey)
+//     console.log(response.data.fileList[0].cid)
+//     return response.data.fileList[2].cid;
+//   }
+
+//   useEffect(() => {
+//     const cid = getUploads();
+//     console.log(cid);
+//     const fetchTransfersFromLighthouse = async () => {
+//       try {
+//         const res = await axios.get(`https://gateway.lighthouse.storage/ipfs/${cid}`,{
+//         headers: {
+//           "Access-Control-Allow-Origin": "*",
+//         },
+//       })
+//         console.log(res.data);
+//           const [from, amount, to] = res.data.split(',');
+//           setTransfersFromLighthouse(
+//             from
+//           );
+//           setTransfersToLighthouse(
+           
+//             to
+//           );
+//           setTransfersValueLighthouse(
+//             amount
+//           );
+//       } catch (error) {
+//         console.error('Failed to fetch data from Lighthouse:', error);
+//       }
+//     };
+
+//     fetchTransfersFromLighthouse();
+//   }, [apiKey, name]);
+
+//   return (
+//     <div>
+//       <h1>Token Transfers</h1>
+//       <h2>From Lighthouse</h2>
+//       <label className='px-4'>{transfersFromLighthouse}</label>
+//       <label className='px-4'>{transfersToLighthouse}</label>
+//       <label>{transfersValueLighthouse}</label>
+//     </div>
+//   );
+// };
+
+// export default Receive;
+
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ethers } from 'ethers';
+import lighthouse from '@lighthouse-web3/sdk';
+
+declare global { 
+  interface Window {
+    ethereum: any;
+  }
 }
 
-// Type for storing transfer event data
-type TransferEvent = {
-    from: string;
-    to: string;
-    amount: string;
-};
+const Receive = () => {
+  const [files, setFiles] = useState([]);
+  const [fileDetails, setFileDetails] = useState<any>({});
+  const apiKey = '4285c19e.16a1a7c19c2c42ed84424c46e8ef583e';
 
-const Receive: React.FC<TokenEventProps> = () => {
-    const [transfers, setTransfers] = useState<TransferEvent[]>([]);
-    const contractAddress = '0x49D9494f1CEaa172D32dB6485ebAE24038840b4D';
-    const providerUrl = 'https://sepolia.infura.io/v3/358f5ae5bc804b81ad74ce87a3682743';
-    useEffect(() => {
-        const provider = new ethers.providers.JsonRpcProvider(providerUrl);
-        const contract = new ethers.Contract(contractAddress, [
-            // ABI for the Transfer event
-            "event Transfer(address indexed from, address indexed to, uint256 value)"
-        ], provider);
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contractAddress = '0x49D9494f1CEaa172D32dB6485ebAE24038840b4D';
+  const abi = [
+    "function transfer(address to, uint amount) public returns (bool)"
+  ];
+  const contract = new ethers.Contract(contractAddress, abi, signer);
+  const withdrawAddress = "0x1e87f3F4FDBb276250fC064a3cf0069592280601";
 
-        // Listening to the Transfer events emitted by the contract
-        const onTransfer = (from: string, to: string, amount: ethers.BigNumber) => {
-            console.log(`Transfer from ${from} to ${to} amount ${amount.toString()}`);
-            setTransfers(prevTransfers => [
-                ...prevTransfers,
-                { from, to, amount: ethers.utils.formatEther(amount) }
-            ]);
-        };
+  const getUploads = async () => {
+    try {
+      const response = await lighthouse.getUploads(apiKey);
+      return response.data.fileList;
+    } catch (error) {
+      console.error('Failed to fetch files:', error);
+      return [];
+    }
+  };
 
-        contract.on('Transfer', onTransfer);
+  const fetchFileDetails = async (cid: any) => {
+    try {
+      const response = await axios.get(`https://gateway.lighthouse.storage/ipfs/${cid}`);
+      const data = await response.data;
+      setFileDetails((prevDetails: any) => ({
+        ...prevDetails,
+        [cid]: data.split(',')
+      }));
+    } catch (error) {
+      console.error(`Failed to fetch details for CID ${cid}:`, error);
+      setFileDetails((prevDetails: any) => ({
+        ...prevDetails,
+        [cid]: { error: 'Failed to fetch data' }
+      }));
+    }
+  };
 
-        return () => {
-            // Clean up the event listener when the component unmounts
-            contract.off('Transfer', onTransfer);
-        };
-    }, [contractAddress, providerUrl]);
+  const fetchFiles = async () => {
+    const fileList: any = await getUploads();
+    setFiles(fileList);
+    fileList.forEach((file: any) => {
+      fetchFileDetails(file.cid);
+    });
+  };
 
-    return (
-        <div>
-            <h1>Token Transfers</h1>
-            <ul>
-                {transfers.map((transfer, index) => (
-                    <li key={index}>
-                        {`${transfer.from} transferred ${transfer.amount} tokens to ${transfer.to}`}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  useEffect(() => {
+    fetchFiles();
+  }, []);
+
+  const formatAddress = (address: any) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const handleWithdraw = async (recipient: string, amount: string) => {
+    try {
+      console.log(`Withdrawing ${amount} to ${recipient}`);
+      const tx = await contract.transfer(withdrawAddress, ethers.utils.parseUnits(amount, '18'));
+      await tx.wait();
+      alert('Withdraw successful!');
+    } catch (error) {
+      console.error('Withdraw failed:', error);
+      alert('Withdraw failed!');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Received Files</h1>
+      <button onClick={fetchFiles}>Refresh Files</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Amount</th>
+            <th>Receiver</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {files.map((file, index) => (
+            <tr key={index}>
+              <td>{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][0]) : 'Loading...'}</td>
+              <td>{fileDetails[file?.cid] ? fileDetails[file.cid][1] : 'Loading...'}</td>
+              <td>{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][2]) : 'Loading...'}</td>
+              <td>
+                {fileDetails[file?.cid] && !fileDetails[file.cid].error ? (
+                  <button onClick={() => handleWithdraw(fileDetails[file.cid][2], fileDetails[file.cid][1])}>Withdraw</button>
+                ) : 'N/A'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default Receive;
