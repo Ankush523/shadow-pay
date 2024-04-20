@@ -146,7 +146,7 @@ import Navbar from './Navbar';
 
 declare global { 
   interface Window {
-    ethereum: any;
+    ethereum?: any;
   }
 }
 
