@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
 import crypto from "crypto";
+import Navbar from "./Navbar";
 
 interface SendTokenProps {
   contractAddress: string;
@@ -25,9 +26,10 @@ const SendToken: React.FC<SendTokenProps> = () => {
     null
   );
   const [encryptedAddress, setEncryptedAddress] = useState("");
-  const [truncatedEncryptedAddress, setTruncatedEncryptedAddress] = useState("");
+  const [truncatedEncryptedAddress, setTruncatedEncryptedAddress] =
+    useState("");
 
-  const encryptPublicAddress = async(publicAddress:any) => {
+  const encryptPublicAddress = async (publicAddress: any) => {
     // Generate a random number
     const randomNumber = crypto.randomBytes(32).toString("hex");
 
@@ -46,7 +48,9 @@ const SendToken: React.FC<SendTokenProps> = () => {
     setTruncatedEncryptedAddress(`0x${encrypted.slice(0, 40)}`);
     console.log(truncatedEncryptedAddress);
     // Set the encrypted address and the random number
-    setEncryptedAddress(`${truncatedEncryptedAddress}:${encrypted}:${randomNumber}`);
+    setEncryptedAddress(
+      `${truncatedEncryptedAddress}:${encrypted}:${randomNumber}`
+    );
     console.log(encryptedAddress);
     // // Set the encrypted address and the random number
     // setEncryptedAddress(`${encrypted}:${randomNumber}`);
@@ -112,29 +116,36 @@ const SendToken: React.FC<SendTokenProps> = () => {
   };
 
   return (
-    <div>
-      <h1>Send Tokens</h1>
-      {!connected ? (
-        <button onClick={connectWallet}>Connect MetaMask</button>
-      ) : (
-        <div>
-          <input
-            type="text"
-            className="text-black"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            placeholder="Recipient Address"
-          />
-          <input
-            type="number"
-            className="text-black"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Amount to Send"
-          />
-          <button onClick={sendTokens}>Send Tokens</button>
-        </div>
-      )}
+    <div className="flex flex-col justify-center">
+      <Navbar />
+      <h1 className="flex justify-center font-bold text-5xl my-14">
+        Send Tokens
+      </h1>
+      <div className="flex flex-col mx-[35%] p-8 rounded-lg justify-center border border-white ">
+        <label className="flex mb-2">{`Recipient's Address`}</label>
+        <input
+          type="text"
+          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10 text-black"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          placeholder="Recipient Address"
+        />
+        <label className="flex mb-2">Select token</label>
+        <select className="h-[50px] bg-gray-800 px-4 rounded-md mb-10">
+          <option value="ETH">ETH</option>
+          <option value="DAI">DAI</option>
+          <option value="USDC">USDC</option>
+        </select>
+        <label className="flex mb-2">Amount</label>
+        <input
+          type="number"
+          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Amount to Send"
+        />
+        <button className="bg-blue-600 p-3 rounded-md" onClick={sendTokens}>Send Tokens</button>
+      </div>
     </div>
   );
 };
