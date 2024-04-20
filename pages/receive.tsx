@@ -142,7 +142,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import lighthouse from '@lighthouse-web3/sdk';
-import Navbar from './Navbar';
+import Navbar from '@/components/Navbar';
 
 declare global { 
   interface Window {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
 import crypto from "crypto";
-import Navbar from "./Navbar";
+import Navbar from "@/components/Navbar";
 
 interface SendTokenProps {
   contractAddress: string;
@@ -21,7 +21,6 @@ const name = "shikamaru"; //Optional
 const SendToken: React.FC<SendTokenProps> = () => {
   const [recipient, setRecipient] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
-  const [connected, setConnected] = useState<boolean>(false);
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(
     null
   );
@@ -62,23 +61,12 @@ const SendToken: React.FC<SendTokenProps> = () => {
     "event Transfer(address indexed from, address indexed to, uint256 value)",
   ];
 
-  // Connect to MetaMask
-  const connectWallet = async () => {
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      setSigner(signer);
-      setConnected(true);
-    } catch (error) {
-      console.error("Error connecting to MetaMask", error);
-      alert("Failed to connect MetaMask. Make sure MetaMask is installed.");
-    }
-  };
-
   // Handle token transfer
   const sendTokens = async () => {
-    if (!signer) return;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    setSigner(signer);
     await encryptPublicAddress(recipient);
     const contract = new ethers.Contract(contractAddress, abi, signer);
     const tx = await contract.transfer(
@@ -125,7 +113,7 @@ const SendToken: React.FC<SendTokenProps> = () => {
         <label className="flex mb-2">{`Recipient's Address`}</label>
         <input
           type="text"
-          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10 text-black"
+          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10 text-white"
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
           placeholder="Recipient Address"
@@ -139,12 +127,14 @@ const SendToken: React.FC<SendTokenProps> = () => {
         <label className="flex mb-2">Amount</label>
         <input
           type="number"
-          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10"
+          className="h-[50px] bg-gray-800 px-4 rounded-md mb-10 text-white"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Amount to Send"
         />
-        <button className="bg-blue-600 p-3 rounded-md" onClick={sendTokens}>Send Tokens</button>
+        <button className="bg-blue-600 p-3 rounded-md" onClick={sendTokens}>
+          Send Tokens
+        </button>
       </div>
     </div>
   );
