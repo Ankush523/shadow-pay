@@ -142,6 +142,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import lighthouse from '@lighthouse-web3/sdk';
+import Navbar from './Navbar';
 
 declare global { 
   interface Window {
@@ -219,35 +220,48 @@ const Receive = () => {
   };
 
   return (
-    <div>
-      <h1>Received Files</h1>
-      <button onClick={fetchFiles}>Refresh Files</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Sender</th>
-            <th>Amount</th>
-            <th>Receiver</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((file, index) => (
-            <tr key={index}>
-              <td>{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][0]) : 'Loading...'}</td>
-              <td>{fileDetails[file?.cid] ? fileDetails[file.cid][1] : 'Loading...'}</td>
-              <td>{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][2]) : 'Loading...'}</td>
-              <td>
-                {fileDetails[file?.cid] && !fileDetails[file.cid].error ? (
-                  <button onClick={() => handleWithdraw(fileDetails[file.cid][2], fileDetails[file.cid][1])}>Withdraw</button>
-                ) : 'N/A'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col text-white">
+      <Navbar />
+      <button onClick={fetchFiles} className="text-white font-bold px-4 rounded my-[60px] text-5xl">
+        Withdraw Funds
+      </button>
+      <div className="w-full px-[10%]">
+        <label className="text-xl mb-2">Funds Received</label>
+        <div className="overflow-x-auto bg-gray-800 p-3 rounded-lg shadow-lg mt-4">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border-b-2 border-gray-500">Sender</th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">Amount</th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">Receiver</th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {files.map((file, index) => (
+                <tr key={index} className="hover:bg-gray-600">
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][0]) : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? fileDetails[file.cid][1] : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][2]) : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">
+                    {fileDetails[file?.cid] && !fileDetails[file.cid].error ? (
+                      <button 
+                        onClick={() => handleWithdraw(fileDetails[file.cid][2], fileDetails[file.cid][1])}
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                      >
+                        Withdraw
+                      </button>
+                    ) : 'N/A'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
+  
 };
 
 export default Receive;
