@@ -204,7 +204,7 @@ const Receive = () => {
   }, []);
 
   const formatAddress = (address: any) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    return `${address.slice(0, 6)}...${address.slice(-6)}`;
   };
 
   const handleWithdraw = async (recipient: string, amount: string) => {
@@ -227,26 +227,26 @@ const Receive = () => {
       </button>
       <div className="w-full px-[10%]">
         <label className="text-xl mb-2">Funds Received</label>
-        <div className="overflow-x-auto bg-gray-800 p-3 rounded-lg shadow-lg mt-4">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto bg-slate-950 border border-white p-3 rounded-lg shadow-lg mt-4">
+          <table className="w-full text-center border-collapse">
             <thead>
               <tr>
                 <th className="px-4 py-2 border-b-2 border-gray-500">Sender</th>
                 <th className="px-4 py-2 border-b-2 border-gray-500">Amount</th>
                 <th className="px-4 py-2 border-b-2 border-gray-500">Receiver</th>
-                <th className="px-4 py-2 border-b-2 border-gray-500">Action</th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">Withdraw Funds</th>
               </tr>
             </thead>
             <tbody>
               {files.map((file, index) => (
                 <tr key={index} className="hover:bg-gray-600">
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][0]) : 'Loading...'}</td>
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? fileDetails[file.cid][1] : 'Loading...'}</td>
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file.cid][2]) : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file?.cid][0]) : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? fileDetails[file?.cid][1] : 'Loading...'}</td>
+                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file?.cid][2]) : 'Loading...'}</td>
                   <td className="px-4 py-2 border-b border-gray-500">
-                    {fileDetails[file?.cid] && !fileDetails[file.cid].error ? (
+                    {fileDetails[file?.cid] && !fileDetails[file?.cid].error ? (
                       <button 
-                        onClick={() => handleWithdraw(fileDetails[file.cid][2], fileDetails[file.cid][1])}
+                        onClick={() => handleWithdraw(fileDetails[file?.cid][2], fileDetails[file?.cid][1])}
                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
                       >
                         Withdraw
@@ -265,3 +265,7 @@ const Receive = () => {
 };
 
 export default Receive;
+
+
+
+//4fbcf482.255304e8d361430aae0e4ed0757eb607
