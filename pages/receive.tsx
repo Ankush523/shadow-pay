@@ -110,7 +110,7 @@
 //             from
 //           );
 //           setTransfersToLighthouse(
-           
+
 //             to
 //           );
 //           setTransfersValueLighthouse(
@@ -137,29 +137,52 @@
 
 // export default Receive;
 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { ethers } from "ethers";
+import lighthouse from "@lighthouse-web3/sdk";
+import Navbar from "@/components/Navbar";
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { ethers } from 'ethers';
-import lighthouse from '@lighthouse-web3/sdk';
-import Navbar from '@/components/Navbar';
+import {
+  SignProtocolClient,
+  SpMode,
+  EvmChains,
+  delegateSignAttestation,
+  delegateSignRevokeAttestation,
+  delegateSignSchema,
+} from "@ethsign/sp-sdk";
+import { privateKeyToAccount } from "viem/accounts";
+const privateKey = "0xabc"; // optional
 
-declare global { 
+declare global {
   interface Window {
     ethereum?: any;
   }
 }
 
 const Receive = () => {
+  const client = new SignProtocolClient(SpMode.OnChain, {
+    chain: EvmChains.arbitrumSepolia,
+  });
+
+  const createAttestation = async () => {
+    const createAttestationRes = await client.createAttestation({
+      schemaId: "0x3d",
+      data: { receiveFunds: true },
+      indexingValue: "1",
+    });
+    console.log(createAttestationRes);
+  };
+
   const [files, setFiles] = useState([]);
   const [fileDetails, setFileDetails] = useState<any>({});
-  const apiKey = '4285c19e.16a1a7c19c2c42ed84424c46e8ef583e';
+  const apiKey = "4285c19e.16a1a7c19c2c42ed84424c46e8ef583e";
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
-  const contractAddress = '0x49D9494f1CEaa172D32dB6485ebAE24038840b4D';
+  const contractAddress = "0x68c92f49634f41655c1D27DbAd1FC7145Cf664f3";
   const abi = [
-    "function transfer(address to, uint amount) public returns (bool)"
+    "function transfer(address to, uint amount) public returns (bool)",
   ];
   const contract = new ethers.Contract(contractAddress, abi, signer);
   const withdrawAddress = "0x1e87f3F4FDBb276250fC064a3cf0069592280601";
@@ -169,24 +192,26 @@ const Receive = () => {
       const response = await lighthouse.getUploads(apiKey);
       return response.data.fileList;
     } catch (error) {
-      console.error('Failed to fetch files:', error);
+      console.error("Failed to fetch files:", error);
       return [];
     }
   };
 
   const fetchFileDetails = async (cid: any) => {
     try {
-      const response = await axios.get(`https://gateway.lighthouse.storage/ipfs/${cid}`);
+      const response = await axios.get(
+        `https://gateway.lighthouse.storage/ipfs/${cid}`
+      );
       const data = await response.data;
       setFileDetails((prevDetails: any) => ({
         ...prevDetails,
-        [cid]: data.split(',')
+        [cid]: data.split(","),
       }));
     } catch (error) {
       console.error(`Failed to fetch details for CID ${cid}:`, error);
       setFileDetails((prevDetails: any) => ({
         ...prevDetails,
-        [cid]: { error: 'Failed to fetch data' }
+        [cid]: { error: "Failed to fetch data" },
       }));
     }
   };
@@ -209,20 +234,27 @@ const Receive = () => {
 
   const handleWithdraw = async (recipient: string, amount: string) => {
     try {
+      await createAttestation();
       console.log(`Withdrawing ${amount} to ${recipient}`);
-      const tx = await contract.transfer(withdrawAddress, ethers.utils.parseUnits(amount, '18'));
+      const tx = await contract.transfer(
+        withdrawAddress,
+        ethers.utils.parseUnits(amount, "18")
+      );
       await tx.wait();
-      alert('Withdraw successful!');
+      alert("Withdraw successful!");
     } catch (error) {
-      console.error('Withdraw failed:', error);
-      alert('Withdraw failed!');
+      console.error("Withdraw failed:", error);
+      alert("Withdraw failed!");
     }
   };
 
   return (
     <div className="flex flex-col text-white">
       <Navbar />
-      <button onClick={fetchFiles} className="text-white font-bold px-4 rounded my-[60px] text-5xl">
+      <button
+        onClick={fetchFiles}
+        className="text-white font-bold px-4 rounded my-[60px] text-5xl"
+      >
         Withdraw Funds
       </button>
       <div className="w-full px-[10%]">
@@ -233,25 +265,48 @@ const Receive = () => {
               <tr>
                 <th className="px-4 py-2 border-b-2 border-gray-500">Sender</th>
                 <th className="px-4 py-2 border-b-2 border-gray-500">Amount</th>
-                <th className="px-4 py-2 border-b-2 border-gray-500">Receiver</th>
-                <th className="px-4 py-2 border-b-2 border-gray-500">Withdraw Funds</th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">
+                  Receiver
+                </th>
+                <th className="px-4 py-2 border-b-2 border-gray-500">
+                  Withdraw Funds
+                </th>
               </tr>
             </thead>
             <tbody>
               {files.map((file, index) => (
-                <tr key={index} className="hover:bg-gray-600">
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file?.cid][0]) : 'Loading...'}</td>
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? fileDetails[file?.cid][1] : 'Loading...'}</td>
-                  <td className="px-4 py-2 border-b border-gray-500">{fileDetails[file?.cid] ? formatAddress(fileDetails[file?.cid][2]) : 'Loading...'}</td>
+                <tr key={index} className="">
+                  <td className="px-4 py-2 border-b border-gray-500">
+                    {fileDetails[file?.cid]
+                      ? formatAddress(fileDetails[file?.cid][0])
+                      : "Loading..."}
+                  </td>
+                  <td className="px-4 py-2 border-b border-gray-500">
+                    {fileDetails[file?.cid]
+                      ? fileDetails[file?.cid][1]
+                      : "Loading..."}
+                  </td>
+                  <td className="px-4 py-2 border-b border-gray-500">
+                    {fileDetails[file?.cid]
+                      ? formatAddress(fileDetails[file?.cid][2])
+                      : "Loading..."}
+                  </td>
                   <td className="px-4 py-2 border-b border-gray-500">
                     {fileDetails[file?.cid] && !fileDetails[file?.cid].error ? (
-                      <button 
-                        onClick={() => handleWithdraw(fileDetails[file?.cid][2], fileDetails[file?.cid][1])}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                      <button
+                        onClick={() =>
+                          handleWithdraw(
+                            fileDetails[file?.cid][2],
+                            fileDetails[file?.cid][1]
+                          )
+                        }
+                        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded"
                       >
-                        Withdraw
+                        Attest & Withdraw
                       </button>
-                    ) : 'N/A'}
+                    ) : (
+                      "N/A"
+                    )}
                   </td>
                 </tr>
               ))}
@@ -261,11 +316,8 @@ const Receive = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Receive;
-
-
 
 //4fbcf482.255304e8d361430aae0e4ed0757eb607

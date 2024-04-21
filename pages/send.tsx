@@ -55,7 +55,7 @@ const SendToken: React.FC<SendTokenProps> = () => {
     // setEncryptedAddress(`${encrypted}:${randomNumber}`);
   };
 
-  const contractAddress = "0x49D9494f1CEaa172D32dB6485ebAE24038840b4D";
+  const contractAddress = "0x68c92f49634f41655c1D27DbAd1FC7145Cf664f3";
   const abi = [
     "function transfer(address to, uint256 value) returns (bool)",
     "event Transfer(address indexed from, address indexed to, uint256 value)",
