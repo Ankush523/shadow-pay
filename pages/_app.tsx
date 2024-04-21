@@ -10,6 +10,7 @@ import {
   polygon,
   optimism,
   gnosis,
+  gnosisChiado,
   arbitrumSepolia,
   base,
 } from "wagmi/chains";
@@ -17,7 +18,16 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 const config = getDefaultConfig({
   appName: "My RainbowKit App",
   projectId: "YOUR_PROJECT_ID",
-  chains: [mainnet, sepolia, polygon, optimism, gnosis, arbitrumSepolia, base],
+  chains: [
+    mainnet,
+    sepolia,
+    polygon,
+    optimism,
+    gnosis,
+    gnosisChiado,
+    arbitrumSepolia,
+    base,
+  ],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
