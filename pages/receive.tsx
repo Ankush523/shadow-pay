@@ -8,6 +8,7 @@ import {
   SpMode,
   EvmChains,
 } from "@ethsign/sp-sdk";
+import dynamic from 'next/dynamic'
 
 declare global {
   interface Window {
@@ -20,17 +21,29 @@ interface File {
   // other properties here as needed
 }
 
-const Receive = () => {
+const ReceiveComponent = () => {
 
-  const [provider, setProvider] = useState<any>();
+  const [provider, setProvider] = useState<ethers.providers.JsonRpcProvider | null>(null);
   const [signer, setSigner] = useState<any>();
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileDetails, setFileDetails] = useState<any>({});
+
+  const apiKey = "4285c19e.16a1a7c19c2c42ed84424c46e8ef583e";
+
+  const contractAddress = "0x68c92f49634f41655c1D27DbAd1FC7145Cf664f3";
+  const abi = [
+    "function transfer(address to, uint amount) public returns (bool)",
+  ];
+  const contract = new ethers.Contract(contractAddress, abi, signer);
+  const withdrawAddress = "0x1e87f3F4FDBb276250fC064a3cf0069592280601";
+
    // Initialize the Ethereum client and signer
    useEffect(() => {
-    if (typeof window !== "undefined" && window.ethereum) {
-      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+    // This ensures we're only trying to access window in a browser environment
+    if (typeof window !== 'undefined' && window.ethereum) {
+      const ethProvider = new ethers.providers.JsonRpcProvider("https://arbitrum-sepolia.infura.io/v3/358f5ae5bc804b81ad74ce87a3682743");
       setProvider(ethProvider);
-      const ethSigner = ethProvider.getSigner();
-      setSigner(ethSigner);
+      setSigner(ethProvider.getSigner());
     }
   }, []);
 
@@ -48,16 +61,6 @@ const Receive = () => {
     console.log(createAttestationRes);
   };
 
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileDetails, setFileDetails] = useState<any>({});
-  const apiKey = "4285c19e.16a1a7c19c2c42ed84424c46e8ef583e";
-
-  const contractAddress = "0x68c92f49634f41655c1D27DbAd1FC7145Cf664f3";
-  const abi = [
-    "function transfer(address to, uint amount) public returns (bool)",
-  ];
-  const contract = new ethers.Contract(contractAddress, abi, signer);
-  const withdrawAddress = "0x1e87f3F4FDBb276250fC064a3cf0069592280601";
 
   const getUploads = async () => {
     try {
@@ -189,6 +192,10 @@ const Receive = () => {
     </div>
   );
 };
+
+const Receive = dynamic(() => Promise.resolve(ReceiveComponent), {
+  ssr: false
+});
 
 export default Receive;
 
