@@ -201,7 +201,7 @@ const Setup = () => {
       `UserOperation included: https://sepolia.etherscan.io/tx/${txHash}`
     );
 
-    alert(`UserOperation included: https://sepolia.etherscan.io/tx/${txHash}`);
+    alert(`UserOperation included with txn hash ${txHash}`);
   };
 
   const createSafeAccount = async () => {
