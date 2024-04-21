@@ -14,7 +14,7 @@ const Navbar = () => {
       <label className="text-3xl text-blue-600 font-bold">Shadow Pay</label>
       <div className="flex flex-row space-x-4">
         {smartAccountAddress && 
-        <div className="bg-white text-black text-center py-2 px-2 rounded-xl">
+        <div className="bg-white text-black font-bold text-center py-2 px-2 rounded-xl">
           Smart Acc: {formatAddress(smartAccountAddress)}
         </div>
         }
