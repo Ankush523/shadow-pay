@@ -259,17 +259,17 @@ const Receive = () => {
       </button>
       <div className="w-full px-[10%]">
         <label className="text-xl mb-2">Funds Received</label>
-        <div className="overflow-x-auto bg-slate-950 border border-white p-3 rounded-lg shadow-lg mt-4">
+        <div className="overflow-x-auto bg-slate-950 border border-white p- rounded-lg shadow-lg mt-4">
           <table className="w-full text-center border-collapse">
             <thead>
               <tr>
-                <th className="px-4 py-2 border-b-2 border-gray-500">Sender</th>
-                <th className="px-4 py-2 border-b-2 border-gray-500">Amount</th>
-                <th className="px-4 py-2 border-b-2 border-gray-500">
-                  Receiver
+                <th className="px-4 font-medium py-4 border-b-2 border-gray-500">SENDER</th>
+                <th className="px-4 font-medium py-2 border-b-2 border-gray-500">AMOUNT</th>
+                <th className="px-4 font-medium py-2 border-b-2 border-gray-500">
+                  RECEIVER
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-500">
-                  Withdraw Funds
+                  WITHDRAW FUNDS
                 </th>
               </tr>
             </thead>
