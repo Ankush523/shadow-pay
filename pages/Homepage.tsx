@@ -15,7 +15,7 @@ const Homepage = () => {
               <label className='text-2xl mb-2 text-blue-600 font-bold'>Send</label>
               <label>Wire funds to another user</label>
           </Link>
-          <Link href='/receive' className='flex flex-col text-center border border-white p-5 mb-10 bg-slate-950'>
+          <Link href='/signin' className='flex flex-col text-center border border-white p-5 mb-10 bg-slate-950'>
               <label className='text-2xl mb-2 text-blue-600 font-bold'>Receive</label>
               <label>Receive funds from another user</label>
           </Link>

@@ -189,6 +189,8 @@ const Setup = () => {
     console.log(
       `UserOperation included: https://sepolia.etherscan.io/tx/${txHash}`
     );
+
+    alert(`UserOperation included: https://sepolia.etherscan.io/tx/${txHash}`);
   };
 
   const createSafeAccount = async () => {
@@ -281,7 +283,7 @@ const Setup = () => {
           className="border border-white p-10 w-[30%] text-blue-600 bg-slate-950 text-xl rounded-xl mt-10"
           onClick={createUserOp}
         >
-          Create User Operation
+          Send sample User Operation
         </button>
       </div>
     </div>

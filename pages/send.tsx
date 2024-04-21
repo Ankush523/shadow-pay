@@ -196,8 +196,9 @@ const SendToken: React.FC<SendTokenProps> = () => {
     });
     console.log("Calculated sender address:", senderAddress);
 
-    const to = truncatedEncryptedAddress; // vitalik
-    const value = 0n;
+    const to : any = truncatedEncryptedAddress; // vitalik
+    const weiValue = ethers.utils.parseUnits(amount.toString(), '18');
+    const value = BigInt(weiValue.toString());;
     const data = "0x68656c6c6f"; // "hello" encoded to utf-8 bytes
 
     const callData = encodeFunctionData({
@@ -271,6 +272,7 @@ const SendToken: React.FC<SendTokenProps> = () => {
       hash: userOperationHash,
     });
     const txHash = receipt.receipt.transactionHash;
+    alert(`Transaction successful! Hash: ${txHash}`);
 
     console.log(
       `UserOperation included: https://sepolia.arbiscan.io/tx/${txHash}`
