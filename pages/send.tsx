@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
 import crypto from "crypto";
@@ -84,12 +84,26 @@ const name = "shikamaru"; //Optional
 const SendToken: React.FC<SendTokenProps> = () => {
   const [recipient, setRecipient] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
-  const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(
-    null
-  );
   const [encryptedAddress, setEncryptedAddress] = useState("");
   const [truncatedEncryptedAddress, setTruncatedEncryptedAddress] =
     useState("");
+  const [provider, setProvider] = useState<any>();
+  const [signer, setSigner] = useState<any>();
+  // Initialize the Ethereum client and signer
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum) {
+      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+      console.log(ethProvider)
+      setProvider(ethProvider);
+      const ethSigner = ethProvider.getSigner();
+      console.log(ethSigner)
+      setSigner(ethSigner);
+    }
+    else
+    {
+      console.log("window.ethereum is undefined")
+    }
+  }, []);
 
   const encryptPublicAddress = async (publicAddress: any) => {
     // Generate a random number
@@ -126,10 +140,10 @@ const SendToken: React.FC<SendTokenProps> = () => {
 
   // Handle token transfer
   const sendTokens = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    setSigner(signer);
+    // const signer = provider.getSigner();
+    // setSigner(signer);
     await encryptPublicAddress(recipient);
     console.log("Encrypted address:", encryptedAddress);
     const contract = new ethers.Contract(contractAddress, abi, signer);
@@ -196,9 +210,9 @@ const SendToken: React.FC<SendTokenProps> = () => {
     });
     console.log("Calculated sender address:", senderAddress);
 
-    const to : any = truncatedEncryptedAddress; // vitalik
-    const weiValue = ethers.utils.parseUnits(amount.toString(), '18');
-    const value = BigInt(weiValue.toString());;
+    const to: any = truncatedEncryptedAddress; // vitalik
+    const weiValue = ethers.utils.parseUnits(amount.toString(), "18");
+    const value = BigInt(weiValue.toString());
     const data = "0x68656c6c6f"; // "hello" encoded to utf-8 bytes
 
     const callData = encodeFunctionData({
@@ -315,7 +329,10 @@ const SendToken: React.FC<SendTokenProps> = () => {
           >
             Send from EOA
           </button>
-          <button className="bg-blue-600 w-[45%] p-3 rounded-md" onClick={createUserOp}>
+          <button
+            className="bg-blue-600 w-[45%] p-3 rounded-md"
+            onClick={createUserOp}
+          >
             Send from Smart Account
           </button>
         </div>

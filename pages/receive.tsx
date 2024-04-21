@@ -21,6 +21,20 @@ interface File {
 }
 
 const Receive = () => {
+
+  const [provider, setProvider] = useState<any>();
+  const [signer, setSigner] = useState<any>();
+   // Initialize the Ethereum client and signer
+   useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum) {
+      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(ethProvider);
+      const ethSigner = ethProvider.getSigner();
+      setSigner(ethSigner);
+    }
+  }, []);
+
+
   const client = new SignProtocolClient(SpMode.OnChain, {
     chain: EvmChains.arbitrumSepolia,
   });
@@ -38,8 +52,6 @@ const Receive = () => {
   const [fileDetails, setFileDetails] = useState<any>({});
   const apiKey = "4285c19e.16a1a7c19c2c42ed84424c46e8ef583e";
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
   const contractAddress = "0x68c92f49634f41655c1D27DbAd1FC7145Cf664f3";
   const abi = [
     "function transfer(address to, uint amount) public returns (bool)",

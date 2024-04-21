@@ -24,7 +24,7 @@ import {
   parseEther,
 } from "viem";
 import { sepolia } from "viem/chains";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { CredentialKey } from "@passwordless-id/webauthn/dist/esm/types";
 import Navbar from "@/components/Navbar";
@@ -73,7 +73,6 @@ const ownerPrivateKey = generatePrivateKey();
 const owner = privateKeyToAccount(ownerPrivateKey);
 
 console.log("Generated wallet with private key:", ownerPrivateKey);
-
 const signer = privateKeyToAccount(
   "0xe805da4a6e8970bd7b523b7b245f88a12918c06bbf1ca4d4d6a93cdfdfe50c57"
 );
@@ -82,6 +81,18 @@ const Setup = () => {
 
   const { setSmartAccountAddress } = useSmartAccount();
   const [safeAddress, setSafeAddress] = useState<string>("");
+  const [provider, setProvider] = useState<any>();
+  const [signerForDeposit, setSignerForDeposit] = useState<any>();
+
+   // Initialize the Ethereum client and signer
+   useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum) {
+      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(ethProvider);
+      const ethSigner = ethProvider.getSigner();
+      setSignerForDeposit(ethSigner);
+    }
+  }, []);
 
   const createUserOp = async () => {
     const factory = SIMPLE_ACCOUNT_FACTORY_ADDRESS;
@@ -231,8 +242,6 @@ const Setup = () => {
     // console.log(txHash)
   };
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signerForDeposit = provider.getSigner();
   const contractAddress = "0x49D9494f1CEaa172D32dB6485ebAE24038840b4D";
   const abi = [
     "function transfer(address to, uint amount) public returns (bool)",
