@@ -23,7 +23,7 @@ interface File {
 
 const ReceiveComponent = () => {
 
-  const [provider, setProvider] = useState<ethers.providers.JsonRpcProvider | null>(null);
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [signer, setSigner] = useState<any>();
   const [files, setFiles] = useState<File[]>([]);
   const [fileDetails, setFileDetails] = useState<any>({});
@@ -39,14 +39,19 @@ const ReceiveComponent = () => {
 
    // Initialize the Ethereum client and signer
    useEffect(() => {
-    // This ensures we're only trying to access window in a browser environment
-    if (typeof window !== 'undefined' && window.ethereum) {
-      const ethProvider = new ethers.providers.JsonRpcProvider("https://arbitrum-sepolia.infura.io/v3/358f5ae5bc804b81ad74ce87a3682743");
+    if (typeof window !== "undefined" && window.ethereum) {
+      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+      console.log(ethProvider)
       setProvider(ethProvider);
-      setSigner(ethProvider.getSigner());
+      const ethSigner = ethProvider.getSigner();
+      console.log(ethSigner)
+      setSigner(ethSigner);
+    }
+    else
+    {
+      console.log("window.ethereum is undefined")
     }
   }, []);
-
 
   const client = new SignProtocolClient(SpMode.OnChain, {
     chain: EvmChains.arbitrumSepolia,
